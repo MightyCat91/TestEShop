@@ -1,15 +1,110 @@
+/*--------------------------------------
+            WEATHER START
+---------------------------------------*/
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.weather-header {
+    justify-content: space-between;
+    font-weight: 600;
+    padding: 1em;
+}
+
+.city {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.weather_icon {
+    width: 100%;
+}
+
+.last_update {
+    justify-content: flex-end;
+}
+
+.last_update > div {
+    padding-right: 1em;
+}
+
 .fact {
-    background-color: #1f648b;
+    background-color: #4a2e2e;
     color: white;
 }
+
 .temp {
-    size: 24px;
-    font-weight: 500;
+    font-size: 48px;
+    font-weight: 600;
+    text-align: center;
 }
+
 .feels_like {
-    size: 12px;
+    font-size: 10px;
+    justify-content: space-around;
 }
+
 .wind {
     font-weight: 500;
 
 }
+
+.pressure, .humidity, .wind {
+    padding: .5em 1em;
+}
+
+.wind_caption, .wind_speed, .pressure_caption, .humidity_caption {
+    padding-right: 1em;
+}
+
+.forecasts {
+    background-color: #4a2e2e;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.forecasts_scroll {
+    display: flex;
+}
+
+.forecast {
+    margin: 1em;
+    background-color: white;
+    padding: 1em;
+    border-radius: 1em;
+}
+
+.forecast_day {
+    font-size: 20px;
+    border-bottom: 1px black solid;
+    text-align: center;
+    font-weight: 600;
+}
+
+.forecast > .flex-row > div {
+    margin: 0 .5em;
+}
+
+.space {
+    justify-content: space-around;
+    align-items: center;
+}
+
+.part {
+    text-align: center;
+}
+
+.forecast_temp {
+    font-size: 16px;
+}
+
+.forecast_icon {
+    width: 5vw;
+}
+
+/*--------------------------------------
+            WEATHER END
+---------------------------------------*/

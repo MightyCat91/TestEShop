@@ -13,11 +13,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('weather', 'WeatherController@show')->name('weather');
+Route::get('/', 'WeatherController@show')->name('weather');
 
 Route::group(['prefix' => 'orders'], function () {
     Route::get('', [
