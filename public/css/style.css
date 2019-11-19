@@ -1,0 +1,15 @@
+.fact {
+    background-color: #1f648b;
+    color: white;
+}
+.temp {
+    size: 24px;
+    font-weight: 500;
+}
+.feels_like {
+    size: 12px;
+}
+.wind {
+    font-weight: 500;
+
+}
