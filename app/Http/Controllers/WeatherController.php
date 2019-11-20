@@ -22,8 +22,8 @@ class WeatherController extends Controller
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-//        curl_setopt($curl, CURLOPT_PROXY, $proxy);     // PROXY details with port
-//        curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxyauth);   // Use if proxy have username and password
+        curl_setopt($curl, CURLOPT_PROXY, $proxy);     // PROXY details with port
+        curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxyauth);   // Use if proxy have username and password
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
             'X-Yandex-API-Key: 21249a78-be7c-4728-b482-75a5dddb5f4a',
         ));
@@ -32,7 +32,7 @@ class WeatherController extends Controller
         // EXECUTE:
         $result = curl_exec($curl);
         if (!$result) {
-            die("Connection Failure");
+            dump("Connection Failure");
         }
         curl_close($curl);
         return $result;
@@ -41,7 +41,6 @@ class WeatherController extends Controller
     private function getWeather()
     {
         $json = $this->callAPI();
-//        dd($json);
         return json_decode($json, true);
     }
 

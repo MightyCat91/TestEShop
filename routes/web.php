@@ -22,7 +22,10 @@ Route::group(['prefix' => 'orders'], function () {
     ]);
     Route::group(['prefix' => 'edit/{id}', 'where' => ['id' => '[0-9]+']], function () {
         Route::get('', [
-            'as' => 'orders-edit', 'uses' => 'EditOrderController@show'
+            'as' => 'order-edit', 'uses' => 'OrdersController@update'
         ]);
     });
+    Route::post('', [
+        'as' => 'order-edit-store', 'uses' => 'OrdersController@store'
+    ]);
 });

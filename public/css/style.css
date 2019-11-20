@@ -108,3 +108,45 @@
 /*--------------------------------------
             WEATHER END
 ---------------------------------------*/
+
+/*--------------------------------------
+            ORDERS START
+---------------------------------------*/
+
+.table_row {
+    justify-content: space-between;
+    border: 1px black solid;
+}
+
+.table_headers {
+    background-color: lightgrey;
+    font-size: 18px;
+}
+
+.header_item, .body_item {
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
+    padding: .5em;
+    align-self: stretch;
+}
+
+.product_name, .product_quantity, .product_price {
+    font-size: 12px;
+}
+
+.order_items {
+    flex-grow: 3;
+}
+
+/*--------------------------------------
+            ORDERS END
+---------------------------------------*/
+
+/*--------------------------------------
+            EDIT ORDER START
+---------------------------------------*/
+
+.product_quantity > input {
+    text-align: center;
+}
