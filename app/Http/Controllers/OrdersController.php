@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderRequest;
 use App\Order;
+use App\OrderProduct;
 use App\Partner;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 
 const STATUSES = [
     0 => "новый",
@@ -30,6 +33,7 @@ class OrdersController extends Controller
         $products = [];
         foreach ($orderProducts as $orderProduct) {
             array_push($products, [
+                'product_id' => $orderProduct->id,
                 'product_name' => $orderProduct->products->name,
                 'product_quantity' => $orderProduct->quantity,
                 'product_price' => $orderProduct->price,
@@ -88,10 +92,13 @@ class OrdersController extends Controller
     public function store(Request $request)
     {
         $order = Order::find($request->id);
-        dd($request->input('clientEmail'));
-//        $flight = App\Flight::find(1);
-//        $flight->name = 'New Flight Name';
-//        $flight->save();
+        $order->client_email = $request->clientEmail;
+        $order->status = $request->status;
+        $order->partner_id = $request->partner;
+        foreach ($request->productQuantity as $product_id => $quantity) {
+            $order->orderProducts->where('id','=',$product_id)->first()->quantity = $quantity;
+        }
+        $order->push();
         return redirect()->back();
     }
 }

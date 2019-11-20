@@ -2,9 +2,9 @@
 @section('content')
     <div class="container">
         <h2>Редактирование заказа № {{$order['order_id']}}</h2>
-        <form  id="edit-order-form" action=" {{route('order-edit-store', ['id'=>$order['order_id']])}}" method="post"
-               enctype="multipart/form-data">
-            @csrf
+        <form id="edit-order-form" action=" {{route('order-edit-store', ['id'=>$order['order_id']])}}" method="post"
+              enctype="multipart/form-data">
+            {{ csrf_field() }}
             <div class="form-group">
                 <label for="client_email">Email</label>
                 <input type="email" class="form-control" id="client-email" aria-describedby="emailHelp"
@@ -12,7 +12,7 @@
             </div>
             <div class="form-group">
                 <label for="partner">Партнер</label>
-                <select class="form-control" id="partner" required>
+                <select class="form-control" id="partner" required name="partner">
                     @foreach($partners as $partner)
                         <option value="{{$partner->id}}" {{($partner->id === $order['partner']) ? "selected" :
                        ''}}>{{$partner->name}}</option>
@@ -21,7 +21,7 @@
             </div>
             <div class="form-group">
                 <label for="status">Статус</label>
-                <select class="form-control" id="status" required>
+                <select class="form-control" id="status" required name="status">
                     @foreach($statuses as $status_id=>$status)
                         <option value="{{$status_id}}" {{($status_id === $order['status']) ? 'selected' : ''}}>{{$status}}</option>
                     @endforeach
@@ -41,13 +41,20 @@
                             <div class="body_item product_name">{{$orderList['product_name']}}</div>
                             <div class="body_item product_quantity">
                                 <input placeholder="Введите количество" required
-                                       value="{{$orderList['product_quantity']}}">
+                                       value="{{$orderList['product_quantity']}}"
+                                       name="productQuantity[{{$orderList['product_id']}}]">
                             </div>
                         </div>
                     @endforeach
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Редактировать</button>
+            <div class="order_cost flex-row">
+                <div class="order_cost_caption">Стоимость всего заказа:</div>
+                <div class="order_cost_value">{{$order['order_cost']}}руб.</div>
+            </div>
+            <div class="edit_order_btn row">
+                <button type="submit" class="btn btn-primary center-block">Редактировать</button>
+            </div>
         </form>
     </div>
 @endsection

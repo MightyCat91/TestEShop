@@ -150,3 +150,12 @@
 .product_quantity > input {
     text-align: center;
 }
+.order_cost {
+    font-size: 18px;
+}
+.order_cost_caption {
+    margin-right: 1em;
+}
+.edit_order_btn {
+    margin: 2em;
+}
