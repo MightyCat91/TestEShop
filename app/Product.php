@@ -10,4 +10,9 @@ class Product extends Model
     {
         return $this->hasMany('App\OrderProduct', 'id', 'product_id');
     }
+
+    public function vendors()
+    {
+        return $this->belongsTo('App\Vendor', 'vendor_id', 'id');
+    }
 }

@@ -3,6 +3,7 @@
     <div class="container">
         <h2>Заказы</h2>
         <div class="row orders">
+            @yield('orders_tabs')
             <div class="orders_table">
                 <div class="table_headers">
                     <div class="table_row flex-row">

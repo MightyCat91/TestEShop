@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderRequest;
+use App\Mail\OrderEmail;
 use App\Order;
-use App\OrderProduct;
 use App\Partner;
-use App\Product;
+use DateInterval;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 const STATUSES = [
     0 => "новый",
@@ -42,27 +42,21 @@ class OrdersController extends Controller
         return $products;
     }
 
-    private function getOrderStatus($statusId)
+    private function sendEmail($order_id)
     {
-        switch ($statusId) {
-            case 0:
-                $status = "новый";
-                break;
-            case 10:
-                $status = "подтвержден";
-                break;
-            default:
-                $status = "завершен";
-                break;
+        $vendor_emails = [];
+        $order = Order::where('id', '=', $order_id)->first();
+        $cost = $this->getOrderCost($order->orderProducts);
+        $productList = $this->getOrderList($order->orderProducts);
+        foreach ($order->orderProducts as $products) {
+            array_push($vendor_emails, $products->products->vendors->email);
         }
-        return $status;
+        Mail::to($order->partners->email)->cc(array_unique($vendor_emails))->send(new OrderEmail($productList, $cost));
     }
 
-
-    public function show()
+    private function generationDataForView($orders)
     {
         $data = [];
-        $orders = Order::all();
         foreach ($orders as $order) {
             array_push($data, [
                 'order_id' => $order->id,
@@ -72,7 +66,59 @@ class OrdersController extends Controller
                 'status' => STATUSES[$order->status]
             ]);
         }
-        return view("orders", ['orders' => $data]);
+        return $data;
+    }
+
+    private function getDateTimeForQuery($interval = null, $direction = 'plus')
+    {
+        $date = new DateTime("now", new DateTimeZone('Europe/Moscow'));
+        if (!empty($interval)) {
+            if ($direction == 'plus') {
+                $date->add(new DateInterval($interval));
+            } elseif ($direction == 'minus') {
+                $date->sub(new DateInterval($interval));
+            }
+        }
+        $date->format('Y-m-d H:i:s');
+        return $date;
+    }
+
+    public function showCurrentOrders()
+    {
+        $orders = Order::where([
+            ['delivery_dt', '<', $this->getDateTimeForQuery('P1D')],
+            ['delivery_dt', '>', $this->getDateTimeForQuery()],
+            ['status', '=', 10],
+        ])->orderBy('delivery_dt', 'asc')->get();
+        return view("current_orders", ['orders' => $this->generationDataForView($orders)]);
+    }
+
+    public function showNewOrders()
+    {
+        $orders = Order::where([
+            ['delivery_dt', '>', $this->getDateTimeForQuery()],
+            ['status', '=', 0],
+        ])->limit(50)->orderBy('delivery_dt', 'asc')->get();
+        return view("new_orders", ['orders' => $this->generationDataForView($orders)]);
+    }
+
+    public function showOldOrders()
+    {
+        $orders = Order::where([
+            ['delivery_dt', '<', $this->getDateTimeForQuery()],
+            ['status', '=', 10],
+        ])->limit(50)->orderBy('delivery_dt', 'desc')->get();
+        return view("old_orders", ['orders' => $this->generationDataForView($orders)]);
+    }
+
+    public function showCompletedOrders()
+    {
+        $orders = Order::where([
+            ['delivery_dt', '>', $this->getDateTimeForQuery('P1D', 'minus')],
+            ['delivery_dt', '<', $this->getDateTimeForQuery()],
+            ['status', '=', 20],
+        ])->limit(50)->orderBy('delivery_dt', 'desc')->get();
+        return view("completed_orders", ['orders' => $this->generationDataForView($orders)]);
     }
 
     public function update($id)
@@ -86,7 +132,7 @@ class OrdersController extends Controller
             'order_list' => $this->getOrderList($order->orderProducts),
             'partner' => $order->partners->id,
         ];
-        return view("order", ['order' => $data, 'partners' => Partner::get(['id', 'name']),'statuses' => STATUSES]);
+        return view("order", ['order' => $data, 'partners' => Partner::get(['id', 'name']), 'statuses' => STATUSES]);
     }
 
     public function store(Request $request)
@@ -96,9 +142,12 @@ class OrdersController extends Controller
         $order->status = $request->status;
         $order->partner_id = $request->partner;
         foreach ($request->productQuantity as $product_id => $quantity) {
-            $order->orderProducts->where('id','=',$product_id)->first()->quantity = $quantity;
+            $order->orderProducts->where('id', '=', $product_id)->first()->quantity = $quantity;
         }
         $order->push();
+        if ($request->status == 20) {
+            $this->sendEmail($request->id);
+        }
         return redirect()->back();
     }
 }

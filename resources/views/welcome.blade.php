@@ -19,7 +19,8 @@
 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
         <li class="active"><a href="{{route("weather")}}">Погода</a></li>
-        <li><a href="{{route("orders")}}">Заказы</a></li>
+        <li><a href="{{route("current_orders")}}">Заказы</a></li>
+        <li><a href="{{route("products")}}">Товары</a></li>
     </ul>
 </div>
 @yield('content')
