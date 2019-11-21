@@ -33,4 +33,4 @@ Route::group(['prefix' => 'orders'], function () {
 });
 
 Route::get('products', ['uses' => 'ProductsController@show'])->name('products');
-Route::post('products', ['uses' => 'ProductsController@update']);
+Route::post('products', ['uses' => 'ProductsController@store']);

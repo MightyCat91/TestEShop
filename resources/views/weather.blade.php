@@ -1,4 +1,5 @@
 @extends('welcome')
+@section('weather_active', 'active')
 @section('content')
 <div class="weather_container container">
     <div class="row">

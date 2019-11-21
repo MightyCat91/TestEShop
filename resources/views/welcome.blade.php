@@ -16,15 +16,20 @@
     <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav">
-        <li class="active"><a href="{{route("weather")}}">Погода</a></li>
-        <li><a href="{{route("current_orders")}}">Заказы</a></li>
-        <li><a href="{{route("products")}}">Товары</a></li>
-    </ul>
-</div>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbar-main">
+            <ul class="nav navbar-nav">
+                <li class='@yield('weather_active')'><a href="{{route("weather")}}">Погода</a></li>
+                <li class='@yield('orders_active')'><a href="{{route("current_orders")}}">Заказы</a></li>
+                <li class='@yield('products_active')'><a href="{{route("products")}}">Товары</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 @yield('content')
 <!-- Scripts -->
 <script src="/js/app.js"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>

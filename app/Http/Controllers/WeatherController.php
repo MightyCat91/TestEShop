@@ -10,40 +10,37 @@ const LON = 34.363731;
 
 class WeatherController extends Controller
 {
-    private function callAPI()
+
+    /**
+     * Получение данных от Yandex.Weather
+     *
+     * @return mixed
+     */
+    private function getWeather()
     {
         $curl = curl_init();
-
         $url = "https://api.weather.yandex.ru/v1/forecast?lat=" . LAT . "&lon=" . LON;
-        $proxy = 'proxy.krista.ru:8080';
-        $proxyauth = 'muzhilkin:2Pv2qu4hkBwD';
 
-        // OPTIONS:
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-//        curl_setopt($curl, CURLOPT_PROXY, $proxy);     // PROXY details with port
-//        curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxyauth);   // Use if proxy have username and password
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
             'X-Yandex-API-Key: 21249a78-be7c-4728-b482-75a5dddb5f4a',
         ));
 
-
-        // EXECUTE:
         $result = curl_exec($curl);
         if (!$result) {
             dump("Connection Failure");
         }
         curl_close($curl);
-        return $result;
+        return json_decode($result, true);
     }
 
-    private function getWeather()
-    {
-        $json = $this->callAPI();
-        return json_decode($json, true);
-    }
-
+    /**
+     * Получение текстового представления направления ветра
+     *
+     * @param $dir
+     * @return string
+     */
     private function getWindDir($dir)
     {
         switch ($dir) {
@@ -78,6 +75,12 @@ class WeatherController extends Controller
         return $ldir;
     }
 
+    /**
+     * Формирование данных для текущего дня
+     *
+     * @param $weather - массив данных погоды
+     * @return array
+     */
     private function getWeatherFactOptions($weather)
     {
         return [
@@ -91,6 +94,12 @@ class WeatherController extends Controller
         ];
     }
 
+    /**
+     * Формирование данных для следующих 10 дней
+     *
+     * @param $weather - массив данных погоды
+     * @return array
+     */
     private function getWeatherForecastsOptions($weather)
     {
         $callbackFunc = function ($value) {
@@ -117,6 +126,11 @@ class WeatherController extends Controller
 
     }
 
+    /**
+     * Отображение шаблона погоды
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function show()
     {
         $weather = $this->getWeather();

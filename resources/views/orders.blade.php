@@ -1,4 +1,5 @@
 @extends('welcome')
+@section('orders_active', 'active')
 @section('content')
     <div class="container">
         <h2>Заказы</h2>

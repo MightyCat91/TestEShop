@@ -19,6 +19,12 @@ const STATUSES = [
 
 class OrdersController extends Controller
 {
+    /**
+     * Получение общей стоимости заказа
+     *
+     * @param $products - коллекция товаров
+     * @return null
+     */
     private function getOrderCost($products)
     {
         $cost = null;
@@ -28,6 +34,12 @@ class OrdersController extends Controller
         return $cost;
     }
 
+    /**
+     * Формирование списка товаров в заказе
+     *
+     * @param $orderProducts - коллекция товаров
+     * @return array
+     */
     private function getOrderList($orderProducts)
     {
         $products = [];
@@ -42,6 +54,11 @@ class OrdersController extends Controller
         return $products;
     }
 
+    /**
+     * Отправка email вендорам
+     *
+     * @param $order_id - идентификатор заказа
+     */
     private function sendEmail($order_id)
     {
         $vendor_emails = [];
@@ -54,6 +71,12 @@ class OrdersController extends Controller
         Mail::to($order->partners->email)->cc(array_unique($vendor_emails))->send(new OrderEmail($productList, $cost));
     }
 
+    /**
+     * Формирование данных для шаблона
+     *
+     * @param $orders - коллекция заказов
+     * @return array
+     */
     private function generationDataForView($orders)
     {
         $data = [];
@@ -69,6 +92,13 @@ class OrdersController extends Controller
         return $data;
     }
 
+    /**
+     * Формирование даты в необходимом формате с учетом таймзоны для фильтрации заказов
+     *
+     * @param null $interval - интервал который добавляется/вычитается из текущей даты
+     * @param string $direction - "направление" изменения даты(в плюс или минус)
+     * @return DateTime
+     */
     private function getDateTimeForQuery($interval = null, $direction = 'plus')
     {
         $date = new DateTime("now", new DateTimeZone('Europe/Moscow'));
@@ -83,6 +113,11 @@ class OrdersController extends Controller
         return $date;
     }
 
+    /**
+     * Отображение текущих заказов
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showCurrentOrders()
     {
         $orders = Order::where([
@@ -93,6 +128,11 @@ class OrdersController extends Controller
         return view("current_orders", ['orders' => $this->generationDataForView($orders)]);
     }
 
+    /**
+     * Отображение новых заказов
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showNewOrders()
     {
         $orders = Order::where([
@@ -102,6 +142,11 @@ class OrdersController extends Controller
         return view("new_orders", ['orders' => $this->generationDataForView($orders)]);
     }
 
+    /**
+     * Отображение просроченных заказов
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showOldOrders()
     {
         $orders = Order::where([
@@ -111,6 +156,11 @@ class OrdersController extends Controller
         return view("old_orders", ['orders' => $this->generationDataForView($orders)]);
     }
 
+    /**
+     * Отображение завершенных заказов
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showCompletedOrders()
     {
         $orders = Order::where([
@@ -121,6 +171,12 @@ class OrdersController extends Controller
         return view("completed_orders", ['orders' => $this->generationDataForView($orders)]);
     }
 
+    /**
+     * Отображение шаблона редактирование заказа
+     *
+     * @param $id - идентификатор заказа
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function update($id)
     {
         $order = Order::where('id', '=', $id)->first();
@@ -135,6 +191,12 @@ class OrdersController extends Controller
         return view("order", ['order' => $data, 'partners' => Partner::get(['id', 'name']), 'statuses' => STATUSES]);
     }
 
+    /**
+     * Редактирование заказа
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $order = Order::find($request->id);
